@@ -11,24 +11,25 @@ debconf-set-selections <<< "mysql-server mysql-server/root_password password $MY
 debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD"
 
 #Tools
-apt-get install htop vim -y
+apt-get install htop vim nano -y
 
 #Main install
 apt-get install mysql-server mysql-client apache2 php5 php5-cli libapache2-mod-php5 php5-mysql php5-memcached php5-curl php5-gd php-pear php5-imagick php5-mcrypt php5-mhash php5-sqlite php5-xmlrpc php5-xsl php5-json php5-dev libpcre3-dev make sed -y
 
-#Zend OpCache and APCu
-#printf "\n" | pecl install ZendOpcache-beta
-printf "\n" | pecl install apcu
-
 #Finding absolute path to opcache.so location on Debian
 #OPCODE_EXTENSION_VAR=$(find / -name opcache.so)
 
-#sed -i "2i\zend_extension=$OPCODE_EXTENSION_VAR\nextension=apcu.so" /etc/php5/apache2/php.ini
+read -p "Install APCU PHP Exention (y/n)?" CONT
+if [ "$CONT" = "y" ]; then
+  #Zend OpCache and APCu
+  printf "\n" | pecl install apcu
 
-sed -i "2i\extension=apcu.so" /etc/php5/apache2/php.ini
-sed -i "4i\opcache.max_accelerated_files=30000" /etc/php5/apache2/php.ini
-sed -i "5i\opcache.memory_consumption=160" /etc/php5/apache2/php.ini
-sed -i "6i\opcache.revalidate_freq=0" /etc/php5/apache2/php.ini
+  #Enable apcu ext
+  sed -i "2i\extension=apcu.so" /etc/php5/apache2/php.ini
+  sed -i "4i\opcache.max_accelerated_files=30000" /etc/php5/apache2/php.ini
+  sed -i "5i\opcache.memory_consumption=160" /etc/php5/apache2/php.ini
+  sed -i "6i\opcache.revalidate_freq=0" /etc/php5/apache2/php.ini
+fi
 
 service apache2 restart
 
