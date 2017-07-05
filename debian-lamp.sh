@@ -10,8 +10,12 @@ MYSQL_ROOT_PASSWORD=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w8 | head -n1)
 debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQL_ROOT_PASSWORD"
 debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD"
 
-#Tools
-apt-get install htop vim nano -y
+read -p "Install htop vim & nano admin tools ? (y/n)?" INS_TOOLS
+if [ "$INS_TOOLS" = "y" ]; then
+  #Tools
+  apt-get install htop vim nano -y
+fi;
+
 
 #Main install
 apt-get install mysql-server mysql-client apache2 php5 php5-cli libapache2-mod-php5 php5-mysql php5-memcached php5-curl php5-gd php-pear php5-imagick php5-mcrypt php5-mhash php5-sqlite php5-xmlrpc php5-xsl php5-json php5-dev libpcre3-dev git make sed -y
